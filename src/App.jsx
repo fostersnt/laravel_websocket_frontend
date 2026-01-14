@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import echo from './lib/echo'
+import { initEcho } from './lib/echo'
+import { login } from './lib/api_requests'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [echoInstance, setEchoInstance] = useState(null);
 
   const user = {
     id: 2,
@@ -13,23 +15,46 @@ function App() {
     email: 'fostersnt@gmail.com',
   };
 
+  // useEffect(() => {
+  //   console.log(`HELLO GHANA`);
+  //   echo.private(`user.${user.id}`)
+  //     .listen("user.updated", (e) => {
+  //       console.log(`HELLO WORLD`);
+
+  //       console.table(e.user);
+  //     });
+  //   console.log(`HELLO AFRICA`);
+
+  //   return () => {
+  //     echo.leave(`user.${user.id}`);
+  //   };
+  // }, [user.id]);
+
   useEffect(() => {
-  echo.private(`user.${user.id}`)
-    .listen("UserInfoUpdated", (e) => {
-      console.table(e.user);
-    });
+    async function setup() {
+      await login(user.email, 'password');  // Login first
+      const echo = initEcho();               // Then init Echo
+      setEchoInstance(echo);
 
-  return () => {
-    echo.leave(`user.${user.id}`);
-  };
-});
+      echo.private(`user.${user.id}`)
+        .listen("user.updated", (e) => {
+          console.log("HELLO WORLD");
+          console.table(e.user);
+        });
+    }
 
+    setup();
+
+    return () => {
+      if (echoInstance) echoInstance.leave(`user.${user.id}`);
+    };
+  }, [user.id]);
 
   return (
     <>
-    <div className="">
-      <h1 className="">WELCOME TO REACT WEBSOCKET</h1>
-    </div>
+      <div className="">
+        <h1 className="">WELCOME TO REACT WEBSOCKET</h1>
+      </div>
       {/* <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
