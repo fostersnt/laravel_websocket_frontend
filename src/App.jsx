@@ -1,14 +1,36 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import echo from './lib/echo'
 
 function App() {
   const [count, setCount] = useState(0)
 
+  const user = {
+    id: 2,
+    name: 'Foster Amponsah Asante',
+    email: 'fostersnt@gmail.com',
+  };
+
+  useEffect(() => {
+  echo.private(`user.${user.id}`)
+    .listen("UserInfoUpdated", (e) => {
+      console.table(e.user);
+    });
+
+  return () => {
+    echo.leave(`user.${user.id}`);
+  };
+});
+
+
   return (
     <>
-      <div>
+    <div className="">
+      <h1 className="">WELCOME TO REACT WEBSOCKET</h1>
+    </div>
+      {/* <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
@@ -27,7 +49,7 @@ function App() {
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
-      </p>
+      </p> */}
     </>
   )
 }
