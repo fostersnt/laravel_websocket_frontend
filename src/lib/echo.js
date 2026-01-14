@@ -36,7 +36,7 @@ export function initEcho() {
     key: PusherDetails.pusherKey,
     cluster: PusherDetails.pusherCluster,
     forceTLS: true,
-    authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
+    authEndpoint: "http://localhost:8000/broadcasting/auth",
     auth: {
       withCredentials: true,
     },
