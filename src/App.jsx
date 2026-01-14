@@ -3,44 +3,40 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { initEcho } from './lib/echo'
-import { login } from './lib/api_requests'
+import { login, updateUser } from './lib/api_requests'
 
 function App() {
   const [count, setCount] = useState(0)
   const [echoInstance, setEchoInstance] = useState(null);
-
-  const user = {
+  const [user, setUser] = useState({
     id: 2,
     name: 'Foster Amponsah Asante',
     email: 'fostersnt@gmail.com',
-  };
+  });
 
-  // useEffect(() => {
-  //   console.log(`HELLO GHANA`);
-  //   echo.private(`user.${user.id}`)
-  //     .listen("user.updated", (e) => {
-  //       console.log(`HELLO WORLD`);
-
-  //       console.table(e.user);
-  //     });
-  //   console.log(`HELLO AFRICA`);
-
-  //   return () => {
-  //     echo.leave(`user.${user.id}`);
-  //   };
-  // }, [user.id]);
+  // const user = {
+  //   id: 2,
+  //   name: 'Foster Amponsah Asante',
+  //   email: 'fostersnt@gmail.com',
+  // };
 
   useEffect(() => {
     async function setup() {
+      const apiToken = localStorage.getItem('AUTH_TOKEN');
       await login(user.email, 'password');  // Login first
-      const echo = initEcho();               // Then init Echo
+      const echo = initEcho(apiToken);               // Then init Echo
       setEchoInstance(echo);
 
+      await updateUser();
+
       echo.private(`user.${user.id}`)
-        .listen("user.updated", (e) => {
+        .listen(".user.updated", (e) => {
           console.log("HELLO WORLD");
-          console.table(e.user);
+          console.table(JSON.stringify(e.user));
+          setUser(e.user);
         });
+
+      // return () => echo.leave(`user.${user.id}`);
     }
 
     setup();
@@ -54,6 +50,7 @@ function App() {
     <>
       <div className="">
         <h1 className="">WELCOME TO REACT WEBSOCKET</h1>
+        <h1 className="">Hi {user.name}</h1>
       </div>
       {/* <div>
         <a href="https://vite.dev" target="_blank">
