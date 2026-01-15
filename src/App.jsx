@@ -20,6 +20,22 @@ function App() {
   //   email: 'fostersnt@gmail.com',
   // };
 
+  const logout = () => {
+    // 1. Tell Laravel to revoke the token (optional but secure)
+    // axios.post('/api/logout'); 
+
+    // 2. Clear the token from React
+    localStorage.removeItem('AUTH_TOKEN');
+
+    // 3. Disconnect Echo so it stops listening to private channels
+    if (echoInstance) {
+        echoInstance.disconnect();
+    }
+    
+    // 4. Redirect to login
+    window.location.href = '/login';
+};
+
   useEffect(() => {
     async function setup() {
       const apiToken = localStorage.getItem('AUTH_TOKEN');
